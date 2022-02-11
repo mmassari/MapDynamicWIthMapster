@@ -26,15 +26,15 @@ These are some response messages:
    "data": "version 15.2"
 }
 {
-   "type": "send",
-   "datetime": "2022-02-18",
-   "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
-   "data": {
-	"cart_id": 22,
-	"items": [
-        {"id": 5, "description": "product 2"},
-        {"id": 12, "description": "product 3"},
-    ] 
+    "type": "send",
+    "datetime": "2022-02-18",
+    "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
+    "data": {
+        "cart_id": 22,
+        "items": [
+            {"id": 5, "description": "product 2"},
+            {"id": 12, "description": "product 3"},
+        ] 
    }
 }
 ```
@@ -88,11 +88,11 @@ And this is my function that manage all the deserializations:
 ```csharp
 private static Response<T> GetData<T>(string json) where T : class
 {
-	//Deserialize the json using dynamic as T so I can receive any kind of data structure
-	var resp = JsonConvert.DeserializeObject<Response<dynamic>>(json);
+    //Deserialize the json using dynamic as T so I can receive any kind of data structure
+    var resp = JsonConvert.DeserializeObject<Response<dynamic>>(json);
 
     //Adapting the dynamic to the requested T type
-	var ret = resp.Adapt<Response<T>>();
+    var ret = resp.Adapt<Response<T>>();
 
 	if (resp.type == "error")
 	{
