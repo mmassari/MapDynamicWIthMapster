@@ -1,13 +1,13 @@
-# MapDynamicWithMapster
+# Map Dynamic data with Mapster
 A sample c# application to work with dynamic data from API endpoint.
 
 ## The problem
 
 I have to manage a lot of API calls to a service and all the response message have a common structure except the "data" field which varies according to the endpoint called and whether the call was successful or not.
 
-This is a typical response message:
+These are some response messages:
 
-```
+```lang-json
 {
    "type": "send",
    "datetime": "2022-02-21",
@@ -19,13 +19,29 @@ This is a typical response message:
 	"size": "XL"
    }
 }
+{
+   "type": "send",
+   "datetime": "2022-02-18",
+   "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
+   "data": "version 15.2"
+}
+{
+   "type": "send",
+   "datetime": "2022-02-18",
+   "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
+   "data": {
+	"cart_id": 22,
+	"items": [
+        {"id": 5, "description": "product 2"},
+        {"id": 12, "description": "product 3"},
+    ] 
+   }
+}
 ```
-The data field is totally variable, sometimes it is a one-level structure, sometimes a multi-level structure, sometimes an array, sometimes a simple string and sometimes a null.
+The data field is totally variable, it can be a simple one-level structure, a complex multi-level structure or an array, and can even be a simple string or null.
 
-Clearly the response messages are known and depends on the called endpoint so I know what to expect when I make the call but there is a case where the structure can still change.
-
-If the call is unsuccessful and there is an error, a 200 is still returned from the endpoint but the response is like this:
-```
+Clearly the response messages are known and depends on the called endpoint so I know what to expect when I make the call but if the server throw an error the response is like this:
+```lang-json
 {
    "type": "error",
    "datetime": "2022-02-21",
@@ -41,7 +57,7 @@ If the call is unsuccessful and there is an error, a 200 is still returned from 
 Looking for an elegant and concise solution to manage all cases with a single method, I was able to find a solution:
 These are my models:
 
-```
+```lang-csharp
 public class Response<T> where T : class
 {
 	public string type { get; set; }
@@ -69,7 +85,7 @@ public class Error
 
 And this is my function that manage all the deserializations:
 
-```
+```lang-csharp
 private static Response<T> GetData<T>(string json) where T : class
 {
 	//Deserialize the json using dynamic as T so can receive any kind of data structure
@@ -88,7 +104,7 @@ private static Response<T> GetData<T>(string json) where T : class
 
 So I call my function in this way:
 
-```
+```lang-csharp
 var customerData = GetData<Customer>("{"type":"data", "data": {"id":1, "name": "John Ross"}}");
 if (customerData.IsError)
 	Console.WriteLine($"ERROR! {customerData.ErrorMessage}");
