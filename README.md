@@ -9,21 +9,21 @@ These are some response messages:
 
 ```json
 {
-   "type": "send",
-   "datetime": "2022-02-21",
-   "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
-   "data": {
-	"id": 22,
-	"description": "blue t-shirt with stripes",
-	"category": "t-shirt",
-	"size": "XL"
-   }
+    "type": "send",
+    "datetime": "2022-02-21",
+    "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
+    "data": {
+	    "id": 22,
+	    "description": "blue t-shirt with stripes",
+	    "category": "t-shirt",
+	    "size": "XL"
+    }
 }
 {
-   "type": "send",
-   "datetime": "2022-02-18",
-   "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
-   "data": "version 15.2"
+    "type": "send",
+    "datetime": "2022-02-18",
+    "correlation_id": "dc659b16-0781-4e32-ae0d-fbe737ff3215",
+    "data": "version 15.2"
 }
 {
     "type": "send",
@@ -35,7 +35,7 @@ These are some response messages:
             {"id": 5, "description": "product 2"},
             {"id": 12, "description": "product 3"},
         ] 
-   }
+    }
 }
 ```
 The data field is totally variable, it can be a simple one-level structure, a complex multi-level structure or an array, and can even be a simple string or null.
