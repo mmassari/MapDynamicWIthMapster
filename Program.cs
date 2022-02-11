@@ -46,15 +46,34 @@ namespace MapDynamicWithMapster
 				Console.WriteLine($"ERROR! {wrongData.ErrorMessage}");
 			else
 				Console.WriteLine($"The response is OK. Customer name is {wrongData.data.company}");
+
+			var customerJsonData = ParseJson<Customer>("{\"type\":\"send\", \"data\": {\"id\":1, \"name\": \"John Ross\"}}");
 		}
 
-		private static Response<T> GetData<T>(string url) where T : class
+		/// <summary>
+		/// Helper utility to get the type from the url in a single call
+		/// </summary>
+		private static Response<T> GetData<T>(string url) where T: class => ParseJson<T>(GetJsonFromUrl(url));
+		
+
+		/// <summary>
+		/// Call the mock Http server and get back a json response
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns></returns>
+		private static string GetJsonFromUrl(string url)
 		{
 			var response = mockHttp.ToHttpClient().GetAsync(url).Result;
 			if (!response.IsSuccessStatusCode)
 				throw new ApplicationException($"The request is failed with error {response.StatusCode}");
 
-			var json = response.Content.ReadAsStringAsync().Result;
+			return response.Content.ReadAsStringAsync().Result;
+		}
+		/// <summary>
+		/// Parse Json string and deserialize in a Respose<T> object managing also the eventual error
+		/// </summary>
+		private static Response<T> ParseJson<T>(string json) where T : class
+		{
 			var dynamicResponse = JsonConvert.DeserializeObject<Response<dynamic>>(json);
 			var output = dynamicResponse.Adapt<Response<T>>();
 
@@ -65,7 +84,9 @@ namespace MapDynamicWithMapster
 			}
 			return output;
 		}
-
+		/// <summary>
+		/// Setup the Mock HTTP server to fake the api calls
+		/// </summary>
 		private static void SetupMockServer()
 		{
 			Console.WriteLine("Setting up a mock web server...");
