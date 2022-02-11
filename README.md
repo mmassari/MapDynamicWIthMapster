@@ -88,8 +88,10 @@ And this is my function that manage all the deserializations:
 ```lang-csharp
 private static Response<T> GetData<T>(string json) where T : class
 {
-	//Deserialize the json using dynamic as T so can receive any kind of data structure
+	//Deserialize the json using dynamic as T so I can receive any kind of data structure
 	var resp = JsonConvert.DeserializeObject<Response<dynamic>>(json);
+    
+    //Adapting the dynamic to the requested T type
 	var ret = resp.Adapt<Response<T>>();
 
 	if (resp.type == "error")
@@ -105,7 +107,7 @@ private static Response<T> GetData<T>(string json) where T : class
 So I call my function in this way:
 
 ```lang-csharp
-var customerData = GetData<Customer>("{"type":"data", "data": {"id":1, "name": "John Ross"}}");
+var customerData = GetData<Customer>("{\"type\":\"send\", \"data\": {\"id\":1, \"name\": \"John Ross\"}}");
 if (customerData.IsError)
 	Console.WriteLine($"ERROR! {customerData.ErrorMessage}");
 else
