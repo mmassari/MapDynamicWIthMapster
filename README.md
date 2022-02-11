@@ -7,7 +7,7 @@ I have to manage a lot of API calls to a service and all the response message ha
 
 These are some response messages:
 
-```lang-json
+```json
 {
    "type": "send",
    "datetime": "2022-02-21",
@@ -41,7 +41,7 @@ These are some response messages:
 The data field is totally variable, it can be a simple one-level structure, a complex multi-level structure or an array, and can even be a simple string or null.
 
 Clearly the response messages are known and depends on the called endpoint so I know what to expect when I make the call but if the server throw an error the response is like this:
-```lang-json
+```json
 {
    "type": "error",
    "datetime": "2022-02-21",
@@ -57,7 +57,7 @@ Clearly the response messages are known and depends on the called endpoint so I 
 Looking for an elegant and concise solution to manage all cases with a single method, I was able to find a solution:
 These are my models:
 
-```lang-csharp
+```csharp
 public class Response<T> where T : class
 {
 	public string type { get; set; }
@@ -85,12 +85,12 @@ public class Error
 
 And this is my function that manage all the deserializations:
 
-```lang-csharp
+```csharp
 private static Response<T> GetData<T>(string json) where T : class
 {
 	//Deserialize the json using dynamic as T so I can receive any kind of data structure
 	var resp = JsonConvert.DeserializeObject<Response<dynamic>>(json);
-    
+
     //Adapting the dynamic to the requested T type
 	var ret = resp.Adapt<Response<T>>();
 
@@ -106,7 +106,7 @@ private static Response<T> GetData<T>(string json) where T : class
 
 So I call my function in this way:
 
-```lang-csharp
+```csharp
 var customerData = GetData<Customer>("{\"type\":\"send\", \"data\": {\"id\":1, \"name\": \"John Ross\"}}");
 if (customerData.IsError)
 	Console.WriteLine($"ERROR! {customerData.ErrorMessage}");
